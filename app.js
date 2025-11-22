@@ -22,14 +22,15 @@ require('dotenv').config();
 
 
 const corsOptions = {
-  origin: ['https://capacitacion.sistemasudh.com', 'http://localhost:5173'],
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+    origin: ['https://capacitacion.sistemasudh.com', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200 // Para navegadores legacy
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // preflight
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
