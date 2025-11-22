@@ -66,23 +66,64 @@ app.use('/uploads/imagenes', express.static(path.join(__dirname, 'uploads/imagen
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/uploads/certificados", express.static(path.join(__dirname, "uploads/certificados")));
 
-// Rutas API
-app.use("/api/certificados", certificadoRoutes);
-app.use("/api/comentarios", comentarioRoutes);
-app.use("/api/archivos", archivoRoutes);
-app.use('/api/estadisticas', estadisticasRoutes);
-app.use('/api/inscripciones', inscripcionesCursosRoutes);
-app.use('/api/categorias', categoriasRoutes);
-app.use('/api/progresos', progresoRoutes);
-app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/notificaciones', notificacionesRouters);
-app.use('/api/cursos', cursosRoutes);
-app.use('/api/tipos-interaccion', tipoInteraccionRoutes);
-app.use('/api/modulos', modulosRouters);
-app.use('/api/videos', videosRoutes);
-app.use('/api/email', emailRoutes);
-app.use('/api/interacciones', interaccionesRoutes);
-app.use('/api/examenes', examenesRoutes);
+// Rutas API - Comentadas para encontrar el error
+// Descomenta de a una para encontrar cuál falla
+try {
+  console.log('Cargando rutas...');
+  
+  app.use("/api/usuarios", usuarioRoutes);
+  console.log('✅ Usuarios cargado');
+  
+  app.use('/api/categorias', categoriasRoutes);
+  console.log('✅ Categorías cargado');
+  
+  app.use('/api/cursos', cursosRoutes);
+  console.log('✅ Cursos cargado');
+  
+  app.use('/api/modulos', modulosRouters);
+  console.log('✅ Módulos cargado');
+  
+  app.use('/api/videos', videosRoutes);
+  console.log('✅ Videos cargado');
+  
+  app.use('/api/progresos', progresoRoutes);
+  console.log('✅ Progresos cargado');
+  
+  app.use("/api/certificados", certificadoRoutes);
+  console.log('✅ Certificados cargado');
+  
+  app.use("/api/comentarios", comentarioRoutes);
+  console.log('✅ Comentarios cargado');
+  
+  app.use('/api/inscripciones', inscripcionesCursosRoutes);
+  console.log('✅ Inscripciones cargado');
+  
+  app.use('/api/estadisticas', estadisticasRoutes);
+  console.log('✅ Estadísticas cargado');
+  
+  app.use('/api/interacciones', interaccionesRoutes);
+  console.log('✅ Interacciones cargado');
+  
+  app.use('/api/notificaciones', notificacionesRouters);
+  console.log('✅ Notificaciones cargado');
+  
+  app.use('/api/tipos-interaccion', tipoInteraccionRoutes);
+  console.log('✅ Tipos interacción cargado');
+  
+  app.use('/api/email', emailRoutes);
+  console.log('✅ Email cargado');
+  
+  app.use("/api/archivos", archivoRoutes);
+  console.log('✅ Archivos cargado');
+  
+  app.use('/api/examenes', examenesRoutes);
+  console.log('✅ Exámenes cargado');
+  
+  console.log('✅ Todas las rutas cargadas exitosamente');
+} catch (error) {
+  console.error('❌ Error al cargar rutas:', error.message);
+  console.error('Stack:', error.stack);
+}
 
 // Manejo de errores 404
 app.use((req, res) => {
