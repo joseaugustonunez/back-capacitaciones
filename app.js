@@ -20,21 +20,19 @@ const archivoRoutes = require('./routes/archivos.js');
 const examenesRoutes = require('./routes/examenes.js');
 require('dotenv').config();
 
-// ===== CORS ACTUALIZADO =====
-app.use(cors({
-  origin: [
-    'https://capacitacion.sistemasudh.com',  // Frontend en producción
-    'http://localhost:5173',                  // Desarrollo local Vite
-    'http://localhost:3000'                   // Desarrollo local alternativo
-  ],
+
+const corsOptions = {
+  origin: ['https://capacitacion.sistemasudh.com', 'http://localhost:5173'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-// ============================
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // preflight
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads/imagenes', express.static(path.join(__dirname, 'uploads/imagenes')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/uploads/certificados", express.static(path.join(__dirname, "uploads/certificados")));
@@ -54,6 +52,7 @@ app.use('/api/videos', videosRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/interacciones', interaccionesRoutes);
 app.use('/api/examenes', examenesRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
