@@ -1,11 +1,9 @@
 
-CREATE DATABASE plataformacapacitaciones CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE plataformacapacitaciones;
 
--- Tabla de usuarios
+
 CREATE TABLE usuarios (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    dni CHAR(8) UNIQUE NOT NULL, -- DNI de 8 dígitos, único
+    dni CHAR(8) UNIQUE NOT NULL, 
     correo_electronico VARCHAR(100) UNIQUE NOT NULL,
     hash_contrasena VARCHAR(255) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
@@ -16,7 +14,6 @@ CREATE TABLE usuarios (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Tabla de categorías de cursos
 CREATE TABLE categorias_cursos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
@@ -25,7 +22,7 @@ CREATE TABLE categorias_cursos (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla de cursos
+
 CREATE TABLE cursos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     titulo VARCHAR(200) NOT NULL,
@@ -43,7 +40,7 @@ CREATE TABLE cursos (
     FOREIGN KEY (id_categoria) REFERENCES categorias_cursos(id) ON DELETE SET NULL
 );
 
--- Tabla de módulos del curso
+
 CREATE TABLE modulos_curso (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_curso INT NOT NULL,
@@ -57,7 +54,7 @@ CREATE TABLE modulos_curso (
     INDEX idx_curso_orden (id_curso, indice_orden)
 );
 
--- Tabla de videos
+
 CREATE TABLE videos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_modulo INT NOT NULL,
@@ -75,7 +72,7 @@ CREATE TABLE videos (
     INDEX idx_modulo_orden (id_modulo, indice_orden)
 );
 
--- Tabla de tipos de contenido interactivo
+
 CREATE TABLE tipos_interaccion (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50) UNIQUE NOT NULL,
@@ -83,7 +80,7 @@ CREATE TABLE tipos_interaccion (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insertar tipos de interacción predefinidos
+
 INSERT INTO tipos_interaccion (nombre, descripcion) VALUES
 ('cuestionario', 'Cuestionario de opción múltiple'),
 ('completar_espacios', 'Completar espacios en blanco'),
@@ -92,7 +89,7 @@ INSERT INTO tipos_interaccion (nombre, descripcion) VALUES
 ('calificacion', 'Calificación con estrellas o escala'),
 ('votacion', 'Votación en tiempo real');
 
--- Tabla de contenido interactivo
+
 CREATE TABLE contenido_interactivo (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_video INT NOT NULL,
@@ -112,7 +109,6 @@ CREATE TABLE contenido_interactivo (
     INDEX idx_video_tiempo (id_video, tiempo_activacion_segundos)
 );
 
--- Tabla de opciones para preguntas de opción múltiple
 CREATE TABLE opciones_interaccion (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_contenido_interactivo INT NOT NULL,
@@ -124,7 +120,6 @@ CREATE TABLE opciones_interaccion (
     FOREIGN KEY (id_contenido_interactivo) REFERENCES contenido_interactivo(id) ON DELETE CASCADE
 );
 
--- Tabla de inscripciones a cursos
 CREATE TABLE inscripciones_cursos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -140,7 +135,7 @@ CREATE TABLE inscripciones_cursos (
     UNIQUE KEY inscripcion_unica (id_usuario, id_curso)
 );
 
--- Tabla de progreso de videos
+
 CREATE TABLE progreso_videos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -153,30 +148,30 @@ CREATE TABLE progreso_videos (
     UNIQUE KEY usuario_video_unico (id_usuario, id_video)
 );
 
--- Tabla de respuestas a contenido interactivo
+
 CREATE TABLE respuestas_interaccion (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
     id_contenido_interactivo INT NOT NULL,
-    datos_respuesta JSON, -- Almacena la respuesta en formato JSON
+    datos_respuesta JSON, 
     es_correcta BOOLEAN DEFAULT NULL,
     puntos_obtenidos INT DEFAULT 0,
     numero_intento INT DEFAULT 1,
-    tiempo_respuesta_segundos INT DEFAULT NULL, -- Tiempo que tardó en responder
+    tiempo_respuesta_segundos INT DEFAULT NULL, 
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (id_contenido_interactivo) REFERENCES contenido_interactivo(id) ON DELETE CASCADE,
     INDEX idx_usuario_contenido (id_usuario, id_contenido_interactivo)
 );
 
--- Tabla de comentarios en videos
+
 CREATE TABLE comentarios_videos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
     id_video INT NOT NULL,
-    id_comentario_padre INT DEFAULT NULL, -- Para respuestas a comentarios
+    id_comentario_padre INT DEFAULT NULL, 
     texto_comentario TEXT NOT NULL,
-    marca_tiempo_segundos INT DEFAULT NULL, -- Momento específico del video
+    marca_tiempo_segundos INT DEFAULT NULL, 
     esta_activo BOOLEAN DEFAULT TRUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -185,7 +180,7 @@ CREATE TABLE comentarios_videos (
     FOREIGN KEY (id_comentario_padre) REFERENCES comentarios_videos(id) ON DELETE CASCADE
 );
 
--- Tabla de calificaciones de cursos
+
 CREATE TABLE calificaciones_cursos (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -199,7 +194,7 @@ CREATE TABLE calificaciones_cursos (
     UNIQUE KEY calificacion_usuario_curso_unica (id_usuario, id_curso)
 );
 
--- Tabla de certificados
+
 CREATE TABLE certificados (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -213,7 +208,7 @@ CREATE TABLE certificados (
     FOREIGN KEY (id_curso) REFERENCES cursos(id) ON DELETE CASCADE
 );
 
--- Tabla de notificaciones
+
 CREATE TABLE notificaciones (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
@@ -227,7 +222,6 @@ CREATE TABLE notificaciones (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- Índices adicionales para optimización
 CREATE INDEX idx_cursos_estado ON cursos(estado);
 CREATE INDEX idx_cursos_instructor ON cursos(id_instructor);
 CREATE INDEX idx_inscripciones_usuario ON inscripciones_cursos(id_usuario);
@@ -236,9 +230,7 @@ CREATE INDEX idx_contenido_interactivo_video ON contenido_interactivo(id_video);
 CREATE INDEX idx_respuestas_usuario ON respuestas_interaccion(id_usuario);
 CREATE INDEX idx_progreso_video_usuario ON progreso_videos(id_usuario);
 
--- Vistas útiles para consultas frecuentes
 
--- Vista de cursos con información del instructor
 CREATE VIEW detalles_cursos AS
 SELECT 
     c.*,
@@ -258,7 +250,6 @@ LEFT JOIN calificaciones_cursos cc ON c.id = cc.id_curso
 LEFT JOIN inscripciones_cursos ic ON c.id = ic.id_curso
 GROUP BY c.id;
 
--- Vista de progreso del estudiante
 CREATE VIEW progreso_estudiante AS
 SELECT 
     ic.id_usuario,
@@ -277,10 +268,6 @@ LEFT JOIN progreso_videos pv ON v.id = pv.id_video AND pv.id_usuario = ic.id_usu
 GROUP BY ic.id_usuario, ic.id_curso;
 
 
-
--- ================================
--- TABLAS PARA SUBIR ARCHIVOS
--- ================================
 CREATE TABLE archivos_modulo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_modulo INT NOT NULL,
@@ -290,9 +277,7 @@ CREATE TABLE archivos_modulo (
     fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_modulo) REFERENCES modulos_curso(id) ON DELETE CASCADE
 );
--- ================================
--- TABLAS PARA EXÁMENES POR MÓDULO
--- ================================
+
 
 CREATE TABLE IF NOT EXISTS examenes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -303,7 +288,7 @@ CREATE TABLE IF NOT EXISTS examenes (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Preguntas de un examen
+
 CREATE TABLE IF NOT EXISTS preguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_examen INT NOT NULL,
@@ -311,7 +296,7 @@ CREATE TABLE IF NOT EXISTS preguntas (
     puntaje INT DEFAULT 1
 );
 
--- Opciones de una pregunta
+
 CREATE TABLE IF NOT EXISTS opciones (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_pregunta INT NOT NULL,
@@ -319,7 +304,7 @@ CREATE TABLE IF NOT EXISTS opciones (
     es_correcta BOOLEAN DEFAULT FALSE
 );
 
--- Respuestas de un usuario a un examen
+
 CREATE TABLE IF NOT EXISTS respuestas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -331,7 +316,7 @@ CREATE TABLE IF NOT EXISTS respuestas (
     UNIQUE KEY unica_respuesta (id_usuario, id_pregunta)
 );
 
--- Intentos de un usuario por examen
+
 CREATE TABLE IF NOT EXISTS intentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -350,7 +335,7 @@ INSERT INTO usuarios (
     rol,
     url_avatar
 ) VALUES (
-    '00000000', -- cambia si lo deseas
+    '00000000', 
     'admin@gmail.com',
     '$2b$12$hoP5dR88tzyi88vT3ZZr2esu.GLZL7.TtWEpWDmoGzP0DRuq5y7iu', -- admin123
     'Admin',
@@ -367,7 +352,7 @@ INSERT INTO usuarios (
     rol,
     url_avatar
 ) VALUES (
-    '11111111', -- puedes cambiarlo
+    '11111111', 
     'gorehco@gmail.com',
     '$2b$12$hoP5dR88tzyi88vT3ZZr2esu.GLZL7.TtWEpWDmoGzP0DRuq5y7iu', -- admin123
     'Gobierno Regional',
