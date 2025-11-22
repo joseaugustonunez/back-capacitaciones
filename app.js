@@ -73,8 +73,116 @@ try {
   console.log('✅ Examenes cargado');
 
   console.log('\n✅ Todos los archivos de rutas cargados exitosamente\n');
+
+  // ===== CONFIGURACIÓN CORS =====
+  const allowedOrigins = [
+    'https://capacitacion.sistemasudh.com',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ];
+
+  app.use(cors({
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log('❌ Origen bloqueado por CORS:', origin);
+        callback(new Error('No permitido por CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    optionsSuccessStatus: 200,
+    preflightContinue: false
+  }));
+
+  app.options('*', cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true })); 
+
+  // Archivos estáticos
+  app.use('/uploads/imagenes', express.static(path.join(__dirname, 'uploads/imagenes')));
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  app.use("/uploads/certificados", express.static(path.join(__dirname, "uploads/certificados")));
+
+  // REGISTRAR RUTAS UNA POR UNA
+  console.log('Registrando rutas en Express...\n');
+
+  console.log('-> Registrando /api/usuarios');
+  app.use("/api/usuarios", usuarioRoutes);
+  
+  console.log('-> Registrando /api/categorias');
+  app.use('/api/categorias', categoriasRoutes);
+  
+  console.log('-> Registrando /api/cursos');
+  app.use('/api/cursos', cursosRoutes);
+  
+  console.log('-> Registrando /api/modulos');
+  app.use('/api/modulos', modulosRouters);
+  
+  console.log('-> Registrando /api/videos');
+  app.use('/api/videos', videosRoutes);
+  
+  console.log('-> Registrando /api/progresos');
+  app.use('/api/progresos', progresoRoutes);
+  
+  console.log('-> Registrando /api/certificados');
+  app.use("/api/certificados", certificadoRoutes);
+  
+  console.log('-> Registrando /api/comentarios');
+  app.use("/api/comentarios", comentarioRoutes);
+  
+  console.log('-> Registrando /api/inscripciones');
+  app.use('/api/inscripciones', inscripcionesCursosRoutes);
+  
+  console.log('-> Registrando /api/estadisticas');
+  app.use('/api/estadisticas', estadisticasRoutes);
+  
+  console.log('-> Registrando /api/interacciones');
+  app.use('/api/interacciones', interaccionesRoutes);
+  
+  console.log('-> Registrando /api/notificaciones');
+  app.use('/api/notificaciones', notificacionesRouters);
+  
+  console.log('-> Registrando /api/tipos-interaccion');
+  app.use('/api/tipos-interaccion', tipoInteraccionRoutes);
+  
+  console.log('-> Registrando /api/email');
+  app.use('/api/email', emailRoutes);
+  
+  console.log('-> Registrando /api/archivos');
+  app.use("/api/archivos", archivoRoutes);
+  
+  console.log('-> Registrando /api/examenes');
+  app.use('/api/examenes', examenesRoutes);
+
+  console.log('\n✅ Todas las rutas registradas exitosamente\n');
+
+  // Manejo de errores
+  app.use((req, res) => {
+    res.status(404).json({ error: 'Ruta no encontrada' });
+  });
+
+  app.use((err, req, res, next) => {
+    console.error('❌ Error:', err.message);
+    res.status(err.status || 500).json({ 
+      error: err.message || 'Error interno del servidor' 
+    });
+  });
+
+  const PORT = process.env.PORT || 3000;
+  const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en ${BASE_URL}`);
+    console.log(`✅ CORS habilitado para: ${allowedOrigins.join(', ')}`);
+  });
+
 } catch (error) {
-  console.error('\n❌ ERROR AL CARGAR ARCHIVOS DE RUTAS:');
+  console.error('\n❌ ERROR:');
   console.error('Mensaje:', error.message);
   console.error('Stack:', error.stack);
   process.exit(1);
