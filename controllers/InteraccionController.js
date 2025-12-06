@@ -5,15 +5,21 @@ const EvaluacionModel = require('../models/EvaluacionModel');
 const ProgresoModel = require('../models/ProgresosModel');
 const ValidacionModel = require('../models/ValidacionModel');
 
-const TIPOS_INTERACCION = {
+/* const TIPOS_INTERACCION = {
   1: 'cuestionario',
-  2: 'encuesta',
   3: 'completar_espacios',
   4: 'arrastrar_soltar',
-  5: 'puntos_interaccion',
   6: 'entrada_texto',
   7: 'calificacion',
   8: 'votacion'
+}; */
+const TIPOS_INTERACCION = {
+  1: 'cuestionario',
+  2: 'completar_espacios',
+  3: 'arrastrar_soltar',
+  4: 'entrada_texto',
+  5: 'calificacion',
+  6: 'votacion'
 };
 
 class InteraccionController {
