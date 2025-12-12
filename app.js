@@ -53,7 +53,6 @@ app.use('/api/tipos-interaccion', tipoInteraccionRoutes);
 app.use('/api/modulos', modulosRouters);
 app.use('/api/videos', videosRoutes);
 app.use("/api/videos-externos", videosExternosRoutes);
-// Ruta alternativa para compatibilidad con frontend que espera este path
 app.use("/api/public/v1/origen-videos", videosExternosRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/interacciones', interaccionesRoutes);
