@@ -18,6 +18,8 @@ const tipoInteraccionRoutes = require('./routes/tipoInteraccionRoutes.js');
 const emailRoutes = require('./routes/email.js');
 const archivoRoutes = require('./routes/archivos.js');
 const examenesRoutes = require('./routes/examenes.js');
+const videosExternosRoutes = require('./routes/videosExternos.js');
+
 require('dotenv').config();
 
 
@@ -50,6 +52,9 @@ app.use('/api/cursos', cursosRoutes);
 app.use('/api/tipos-interaccion', tipoInteraccionRoutes);
 app.use('/api/modulos', modulosRouters);
 app.use('/api/videos', videosRoutes);
+app.use("/api/videos-externos", videosExternosRoutes);
+// Ruta alternativa para compatibilidad con frontend que espera este path
+app.use("/api/public/v1/origen-videos", videosExternosRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/interacciones', interaccionesRoutes);
 app.use('/api/examenes', examenesRoutes);
