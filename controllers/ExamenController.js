@@ -28,15 +28,33 @@ const ExamenController = {
 
   crear: async (req, res) => {
     try {
-      const { id_modulo, titulo, intentos_permitidos } = req.body;
+      const { id_modulo, titulo, intentos_permitidos, puntaje_minimo_aprobacion, es_obligatorio } = req.body;
 
       if (!id_modulo || !titulo) {
         return res.status(400).json({ error: 'id_modulo y titulo son obligatorios' });
       }
 
-      const result = await ExamenModel.crear({ id_modulo, titulo, intentos_permitidos });
+      const puntajeVal = typeof puntaje_minimo_aprobacion !== 'undefined' ? parseFloat(puntaje_minimo_aprobacion) : undefined;
+      const esObligatorioVal = typeof es_obligatorio !== 'undefined'
+        ? (['1',1,true,'true', 'True'].includes(es_obligatorio) ? 1 : 0)
+        : undefined;
 
-      res.status(201).json({ id: result.insertId, id_modulo, titulo, intentos_permitidos });
+      const result = await ExamenModel.crear({
+        id_modulo,
+        titulo,
+        intentos_permitidos,
+        puntaje_minimo_aprobacion: typeof puntajeVal !== 'undefined' && !isNaN(puntajeVal) ? puntajeVal : undefined,
+        es_obligatorio: typeof esObligatorioVal !== 'undefined' ? esObligatorioVal : undefined,
+      });
+
+      res.status(201).json({
+        id: result.insertId,
+        id_modulo,
+        titulo,
+        intentos_permitidos,
+        puntaje_minimo_aprobacion: typeof puntajeVal !== 'undefined' ? puntajeVal : 0.0,
+        es_obligatorio: typeof esObligatorioVal !== 'undefined' ? (esObligatorioVal === 1) : false,
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Error al crear el examen' });
@@ -48,10 +66,20 @@ const ExamenController = {
       const id = parseInt(req.params.id);
       if (isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
 
-      const { titulo, intentos_permitidos } = req.body;
+      const { titulo, intentos_permitidos, puntaje_minimo_aprobacion, es_obligatorio } = req.body;
       if (!titulo) return res.status(400).json({ error: 'titulo es obligatorio' });
 
-      await ExamenModel.actualizar(id, { titulo, intentos_permitidos });
+      const puntajeVal = typeof puntaje_minimo_aprobacion !== 'undefined' ? parseFloat(puntaje_minimo_aprobacion) : undefined;
+      const esObligatorioVal = typeof es_obligatorio !== 'undefined'
+        ? (['1',1,true,'true', 'True'].includes(es_obligatorio) ? 1 : 0)
+        : undefined;
+
+      await ExamenModel.actualizar(id, {
+        titulo,
+        intentos_permitidos,
+        puntaje_minimo_aprobacion: typeof puntajeVal !== 'undefined' && !isNaN(puntajeVal) ? puntajeVal : undefined,
+        es_obligatorio: typeof esObligatorioVal !== 'undefined' ? esObligatorioVal : undefined,
+      });
 
       const examenActualizado = await ExamenModel.buscarPorId(id);
       res.json(examenActualizado);

@@ -11,23 +11,31 @@ const ExamenModel = {
     return rows.length > 0 ? rows[0] : null;
   },
 
-  crear: async ({ id_modulo, titulo, intentos_permitidos }) => {
+  crear: async ({ id_modulo, titulo, intentos_permitidos, puntaje_minimo_aprobacion, es_obligatorio }) => {
     const [result] = await db.query(
-      `INSERT INTO examenes (id_modulo, titulo, intentos_permitidos)
-       VALUES (?, ?, ?)`,
+      `INSERT INTO examenes (id_modulo, titulo, intentos_permitidos, puntaje_minimo_aprobacion, es_obligatorio)
+       VALUES (?, ?, ?, ?, ?)`,
       [
         id_modulo,
         titulo,
         typeof intentos_permitidos !== 'undefined' ? intentos_permitidos : 1,
+        typeof puntaje_minimo_aprobacion !== 'undefined' ? puntaje_minimo_aprobacion : 0.0,
+        typeof es_obligatorio !== 'undefined' ? (es_obligatorio ? 1 : 0) : 0,
       ]
     );
     return result;
   },
 
-  actualizar: async (id, { titulo, intentos_permitidos }) => {
+  actualizar: async (id, { titulo, intentos_permitidos, puntaje_minimo_aprobacion, es_obligatorio }) => {
     const [result] = await db.query(
-      `UPDATE examenes SET titulo = ?, intentos_permitidos = ? WHERE id = ?`,
-      [titulo, typeof intentos_permitidos !== 'undefined' ? intentos_permitidos : 1, id]
+      `UPDATE examenes SET titulo = ?, intentos_permitidos = ?, puntaje_minimo_aprobacion = ?, es_obligatorio = ? WHERE id = ?`,
+      [
+        titulo,
+        typeof intentos_permitidos !== 'undefined' ? intentos_permitidos : 1,
+        typeof puntaje_minimo_aprobacion !== 'undefined' ? puntaje_minimo_aprobacion : 0.0,
+        typeof es_obligatorio !== 'undefined' ? (es_obligatorio ? 1 : 0) : 0,
+        id,
+      ]
     );
     return result;
   },
